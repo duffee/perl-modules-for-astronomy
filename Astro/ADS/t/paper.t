@@ -175,15 +175,20 @@ my $cites = $paper->citations();
 print "# Continuing Tests\n";
 # 27 citations as of Feb 2010
 # 28 citations as of Feb 2011
+# 30 citations as of Jul 2011
 # The number of citations is always increasing, so as long as
 # this value is greater than 28, you should be fine.  If in doubt,
 # check http://adsabs.harvard.edu/abs/1998MNRAS.295..167A
 
+my %ADS_citations = ( number_reported => 30,
+						year_reported => 2011 );
+
 my $current_number_of_citations = $cites->sizeof();
 my $current_year = 1900 + (localtime)[5];
 
-ok( $current_number_of_citations >= 28 
-	&& $current_number_of_citations <= (28 + $current_year - 2010) );
+ok( $current_number_of_citations >= $ADS_citations{'number_reported'} 
+	&& $current_number_of_citations <= 
+		($ADS_citations{'number_reported'} + $current_year - $ADS_citations{'year_reported'} + 1) );
 
 
 # shouldn't be a TOC with this paper
