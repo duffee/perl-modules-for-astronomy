@@ -1,7 +1,0 @@
-ChangeLog
-Globus.pm
-Globus.xs
-MANIFEST
-Makefile.PL
-typemap
-t/globus.t

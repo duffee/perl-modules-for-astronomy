@@ -1,7 +1,0 @@
-MANIFEST
-Makefile.PL
-GPL
-ChangeLog
-Quality.pm
-t/1_compile.t
-t/2_quality.t
