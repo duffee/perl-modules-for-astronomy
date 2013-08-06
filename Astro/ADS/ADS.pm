@@ -48,6 +48,31 @@ above which turns the URL from an object variable to a class variable.
 
 =back
 
+=head1 TODO
+
+=over
+
+=item Document issues with ADS mirrors, proxy() and $ENV{HTTP_PROXY}
+
+Explain the preference to set the class variable using the ads_mirror() method
+in Astro::ADS::Query at the top of the script so that followup queries go to
+the expected place.
+
+Also note that the proxy() method is only affects one query object and 
+the user agent looks at the environment variables HTTP_PROXY and NO_PROXY to
+the exclusion of almost all else.  Once again, set $ENV{HTTP_PROXY} at the
+top of your script for least confusion.
+
+=item Fix followup queries on B<alsoread> and B<tableofcontents>
+
+Followups are new query objects, so there are issues with alsoread and tableofcontents.
+No one has noticed yet and I don't have time to fix it.
+
+=item Tweak make to prompt for default ADS mirror
+
+This is a "good" idea, but fiddly to implement.  Prompt the user for one of the
+ADS mirrors during the installation and write it into Astro::ADS::Query to save
+setting it at the beginning of each script
 
 =cut
 
