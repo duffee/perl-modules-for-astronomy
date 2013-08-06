@@ -1,71 +1,42 @@
 # Astro::ADS::Result::Paper test harness
 
-# strict
-use strict;
-
-#load test
-use Test;
-BEGIN { plan tests => 50 };
-
-# load modules
+use Test::More tests => 21;
 use Astro::ADS::Query;
-use Astro::ADS::Result;
 use Astro::ADS::Result::Paper;
 
 # T E S T   H A R N E S S --------------------------------------------------
-
-# test the test system
-ok(1);
-
-my ( $bibcode, $title, @authors, @affil, $journal, $published, @keywords,
-     $origin, @links, $URL, @abstract, $object, $score );
+my $wait = 5;   # seconds to wait before subsequent calls to ADS
 
 # Set the test paper meta-data
-$bibcode = "1998MNRAS.295..167A";
-$title = "ASCA X-ray observations of EX Hya - Spin-resolved spectroscopy";
+my $bibcode = "1998MNRAS.295..167A";
+my $title = "ASCA X-ray observations of EX Hya - Spin-resolved spectroscopy";
 
-$authors[0] = "Allan, Alasdair";
-$authors[1] = "Hellier, Coel";
-$authors[2] = "Beardmore, Andrew";
-$affil[0] = "Keele Univ. 0";
-$affil[1] = "Keele Univ. 1";
-$affil[2] = "Keele Univ. 2";
+my @authors = ("Allan, Alasdair", "Hellier, Coel", "Beardmore, Andrew");
+my @affil = ( "Keele Univ. 0", "Keele Univ. 1", "Keele Univ. 2");
 
-$journal = "Royal Astronomical Society, Monthly Notices, vol. 295, p. 167";
-$published = "3/1998";
+my $journal = "Royal Astronomical Society, Monthly Notices, vol. 295, p. 167";
+my $published = "3/1998";
 
-$keywords[0] = "WHITE DWARF STARS";
-$keywords[1] = "X RAY ASTRONOMY";
-$keywords[2] = "SPECTRAL RESOLUTION";
-$keywords[3] = "ASTRONOMICAL"; 
-$keywords[4] = "SPECTROSCOPY";
-$keywords[5] = "ACCRETION DISKS";
-$keywords[6] = "ASTRONOMICAL MODELS";
-$keywords[7] = "TEMPERATURE"; 
-$keywords[8] = "DISTRIBUTION";
-$keywords[9] = "SHOCK WAVES";
+my @keywords = ( "WHITE DWARF STARS", "X RAY ASTRONOMY", "SPECTRAL RESOLUTION", 
+	"ASTRONOMICAL", "SPECTROSCOPY", "ACCRETION DISKS", "ASTRONOMICAL MODELS", 
+	"TEMPERATURE", "DISTRIBUTION", "SHOCK WAVES");
 
-$origin = "STI";
+my $origin = "STI";
 
-$links[0] = "ABSTRACT";
-$links[1] = "EJOURNAL";
-$links[2] = "ARTICLE";
-$links[3] = "GIF";
-$links[4] = "REFERENCES";
-$links[5] = "CITATIONS";
-$links[6] = "SIMBAD";
+my @links = ( "ABSTRACT", "EJOURNAL", "ARTICLE", "GIF", "REFERENCES", "CITATIONS", "SIMBAD");
 
-$URL =
- "http://cdsads.u-strasbg.fr/cgi-bin/nph-bib_query?bibcode=1998MNRAS.295..167A";
+my $URL = 'http://ukads.nottingham.ac.uk/cgi-bin/nph-bib_query?bibcode=1998MNRAS.295..167A';
+#"http://cdsads.u-strasbg.fr/cgi-bin/nph-bib_query?bibcode=1998MNRAS.295..167A";
 
-@abstract = <DATA>;
+my @abstract = <DATA>;
 chomp @abstract;
 
-$object = "EX Hya";
+my $object = "EX Hya";
 
-$score = 1.0;
+my $score = 1.0;
 
 # create an Astro::ADS::Result::Paper object from the meta-data
+diag("Create new Result::Paper object with full metadata for $bibcode");
 my $paper = new Astro::ADS::Result::Paper( Bibcode   => $bibcode,
                                            Title     => $title,
                                            Authors   => \@authors,
@@ -80,85 +51,58 @@ my $paper = new Astro::ADS::Result::Paper( Bibcode   => $bibcode,
                                            Object    => $object,
                                            Score     => $score );
 
-# compare bibcodes  
-ok( $paper->bibcode(), $bibcode );
+is( $paper->bibcode(), $bibcode, "Should fetch paper bibcode $bibcode" );
+is( $paper->title(), $title, "Should fetch paper title $title" );
 
-# compare titles
-ok( $paper->title(), $title );
-
-# check its got all the authors
+# Authors
 my @ret_authors = $paper->authors();
-for my $i (0 .. $#authors) {
-   ok( $ret_authors[$i], $authors[$i] );
-}
-
-# check scalar context call
+is_deeply( \@ret_authors, \@authors, "Should get 3 authors" );
 my $first_author = $paper->authors();
-ok( $first_author, $authors[0] );
+is( $first_author, $authors[0], "Calling authors in scalar context gets the first author" );
 
-# check its got all the author affiliations
+
+# Author Afilliations
 my @ret_affil = $paper->affil();
-for my $j (0 .. $#affil) {
-   ok( $ret_affil[$j], $affil[$j] );
-}
-
-# check scalar context call
+is_deeply( \@ret_affil, \@affil, "Afilliations" );
 my $first_author_affil = $paper->affil();
-ok( $first_author_affil, $affil[0] );
+is( $first_author_affil, $affil[0], "check affiliation in scalar context" );
 
-# compare journal ref
-ok( $paper->journal(), $journal );
 
-# compare publication dates
-ok( $paper->published(), $published );
+# Check the metadata is the same
+is( $paper->journal(), $journal, "check the journal $journal" );
+is( $paper->published(), $published, "check the publication date $published" );
+is( $paper->object(), $object, "the astronomical object should be $object" );
+is( $paper->score(), $score, "the score should be $score" );
+is( $paper->origin(), $origin, "is the origin $origin" );
 
-# check its got all the keywords
+# Keywords
 my @ret_keys = $paper->keywords();
-for my $k (0 .. $#keywords) {
-   ok( $ret_keys[$k], $keywords[$k] );
-}
-
-# check scalar context call
+is_deeply(\@ret_keys, \@keywords, 'Should fetch all the keywords');
 my $num_keys = $paper->keywords();
-ok( $num_keys, $#keywords );
+is( $num_keys, $#keywords, "keywords called in scalar context should get the number -1" );
 
-# compare origin
-ok( $paper->origin(), $origin );
 
-# check its got all the outbound links
+# Links (outbound)
 my @ret_urls = $paper->links();
-for my $l (0 .. $#links) {
-   ok( $ret_urls[$l], $links[$l] );
-}
-
-# check scalar context call
+is_deeply(\@ret_urls, \@links, 'Should fetch all the outbound links');
 my $num_urls = $paper->links();
-ok( $num_urls, $#links );
+is( $num_urls, $#links, "Scalar call to links should give $#links" );
 
-# check its got the abstract
+# Abstract
 my @ret_abs = $paper->abstract();
-for my $m (0 .. $#abstract) {
-   ok( $ret_abs[$m], $abstract[$m] );
-}
-
-# check scalar context call
+is_deeply(\@ret_abs, \@abstract, 'Should get its abstract');
 my $lines = $paper->abstract();
-ok( $lines, $#abstract );
+is( $lines, $#abstract, "scalar call to abstract" );
 
-# compare objects 
-ok( $paper->object(), $object );
 
-# compare scores  
-ok( $paper->score(), $score );
-
+####
 # FOLLOWUP QUERIES
 # ----------------
 
 
-# do a followup query
-print "# Connecting to ADS\n";
+diag("do a followup query by calling the references method");
+sleep $wait;
 my $refs = $paper->references();
-print "# Continuing Tests\n";
 
 #### Source of Possible Confusion #### 
 # As of Feb 2010, there are 27 citations and 30 references reported by ADS
@@ -167,36 +111,49 @@ print "# Continuing Tests\n";
 # There are 32 references in the original paper
 ####
 my $references_found = $refs->sizeof();
-ok( $references_found >= 30 && $references_found <= 32 );
+ok( $references_found >= 30 && $references_found <= 32, "number of references bounded between 30 and 32" );
 
-# do a followup query
-print "# Connecting to ADS\n";
+#
+# Citations
+#
+diag("do a followup query by calling the citations method");
+sleep $wait;
 my $cites = $paper->citations();
-print "# Continuing Tests\n";
+
 # 27 citations as of Feb 2010
 # 28 citations as of Feb 2011
 # 30 citations as of Jul 2011
+# 34 citations as of Jul 2013
 # The number of citations is always increasing, so as long as
 # this value is greater than 28, you should be fine.  If in doubt,
 # check http://adsabs.harvard.edu/abs/1998MNRAS.295..167A
 
-my %ADS_citations = ( number_reported => 30,
-						year_reported => 2011 );
+my %ADS_citations = ( number_reported => 34,
+						year_reported => 2013,
+						cites_per_year => 2 );
 
 my $current_number_of_citations = $cites->sizeof();
 my $current_year = 1900 + (localtime)[5];
 
-ok( $current_number_of_citations >= $ADS_citations{'number_reported'} 
-	&& $current_number_of_citations <= 
-		($ADS_citations{'number_reported'} + $current_year - $ADS_citations{'year_reported'} + 1) );
+cmp_ok( $current_number_of_citations, '>=', $ADS_citations{'number_reported'}, 
+			"The current number of citations must at least $ADS_citations{'number_reported'}");
+cmp_ok( $current_number_of_citations, 
+		'<=',
+        ($ADS_citations{'number_reported'} 
+			+ $ADS_citations{'cites_per_year'} * ($current_year - $ADS_citations{'year_reported'})
+			+ 1
+		),
+		"The current number of citations shouldn't be too many more than $ADS_citations{'number_reported'}
+Ignore this test failure if the number of ciations is close enough to the expected value" );
 
-
+#
+# Table of Contents
+#
 # shouldn't be a TOC with this paper
-print "# Connecting to ADS\n";
 my $toc = $paper->tableofcontents();
-print "# Continuing Tests\n";
-ok( $toc, undef );
+is( $toc, undef, "There should be No table of contents" );
 
+done_testing();
 exit;
 
 # D A T A   B L O C K  ----------------------------------------------------

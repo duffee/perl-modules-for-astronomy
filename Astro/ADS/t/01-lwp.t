@@ -1,11 +1,17 @@
 #!perl -T
 
-use Test::More tests => 8;
+#
+# This test suite tests the methods most closely associated with LWP and the user agent, bjd 2013
+# 
 
+use Test::More tests => 10;
 use Astro::ADS::Query;
 
 ok( $query = new Astro::ADS::Query(), 'Creating a query object');
 is( $query->url(), 'cdsads.u-strasbg.fr', 'Defaults to strasbourg');
+ok( $query->url('ukads.nottingham.ac.uk'), 'Change to Nottingham');
+is( $query->url(), 'ukads.nottingham.ac.uk', 'Should reflect change of site to Nottingham');
+
 is( $query->proxy(), '', 'No proxy');
 
 like( $query->agent(), qr{^Astro::ADS/$Astro::ADS::Query::VERSION \(.+\)$}, 'get the useragent string');

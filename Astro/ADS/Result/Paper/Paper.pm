@@ -69,12 +69,13 @@ use vars qw/ $VERSION /;
 # Overloading
 use overload '""' => "stringify";
 
-'$Revision: 1.11 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
+'$Revision: 1.25 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
 
 # C O N S T R U C T O R ----------------------------------------------------
 
 =head1 REVISION
 
+$Id: Paper.pm,v 1.25 2013/08/06 bjd Exp $
 $Id: Paper.pm,v 1.11 2001/11/10 20:58:43 timj Exp $
 
 =head1 METHODS
@@ -412,7 +413,7 @@ sub references {
   }
 
   # return if keyword has not been flagged
-  return undef unless defined $flag;
+  return unless defined $flag;
 
   # grab the bibcode of the paper
   my $bibcode = $self->{BIBCODE};
@@ -443,7 +444,7 @@ sub citations {
   }
 
   # return if keyword has not been flagged
-  return undef unless defined $flag;
+  return unless defined $flag;
 
   # grab the bibcode of the paper
   my $bibcode = $self->{BIBCODE};
@@ -475,7 +476,7 @@ sub alsoread {
   }
 
   # return if keyword has not been flagged
-  return undef unless defined $flag;
+  return unless defined $flag;
 
   # grab the bibcode of the paper
   my $bibcode = $self->{BIBCODE};
@@ -508,7 +509,7 @@ sub tableofcontents {
   }
 
   # return if keyword has not been flagged
-  return undef unless defined $flag;
+  return unless defined $flag;
 
   # grab the bibcode of the paper
   my $bibcode = $self->{BIBCODE};
@@ -608,7 +609,7 @@ sub configure {
   my $self = shift;
 
   # return unless we have arguments
-  return undef unless @_;
+  return unless @_;
 
   # grab the argument list
   my %args = @_;
@@ -695,7 +696,7 @@ sub summary {
 
 	# Indent a little
 	push(@output, "  <$plural>");
-	push(@output, map { "    <$single>$_</$single>" } @results),
+	push(@output, map { "    <$single>$_</$single>" } @results);
 	push(@output, "  </$plural>");
 
       } else {

@@ -3,3 +3,6 @@ blib
 Makefile
 *.bck
 META.yml
+*.yml
+*.json
+adsquery

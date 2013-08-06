@@ -127,7 +127,7 @@ sub pushpaper {
   my $self = shift;
 
   # return unless we have arguments
-  return undef unless @_;
+  return unless @_;
 
   my $paper = shift;
   my $bibcode = $paper->bibcode();
@@ -183,7 +183,7 @@ sub paperbyindex {
   my $self = shift;
 
   # return unless we have arguments
-  return undef unless @_;
+  return unless @_;
 
   my $index = shift;
 
@@ -224,7 +224,7 @@ sub configure {
   my $self = shift;
 
   # return unless we have arguments
-  return undef unless @_;
+  return unless @_;
 
   # grab the argument list
   my %args = @_;

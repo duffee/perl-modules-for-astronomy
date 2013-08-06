@@ -67,11 +67,11 @@ use Astro::ADS::Result::Paper;
 use Net::Domain qw(hostname hostdomain);
 use Carp;
 
-'$Revision: 1.24 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
+'$Revision: 1.25 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
 
 # C L A S S   A T T R I B U T E S ------------------------------------------
 {
-	my $_ads_mirror = 'cdsads.u-strasbg.fr';
+	my $_ads_mirror = 'cdsads.u-strasbg.fr';	# this is the default mirror site
 	sub ads_mirror {
 		my ($class, $new_mirror) = @_;
 		$_ads_mirror = $new_mirror if @_ > 1;
@@ -83,9 +83,10 @@ use Carp;
 
 =head1 REVISION
 
-$Id: Query.pm,v 1.21 2002/09/23 21:07:49 aa Exp $
-$Id: Query.pm,v 1.22 2009/05/01 bjd Exp $
+$Id: Query.pm,v 1.25 2013/08/06 bjd Exp $
 $Id: Query.pm,v 1.24 2009/07/01 bjd Exp $
+$Id: Query.pm,v 1.22 2009/05/01 bjd Exp $
+$Id: Query.pm,v 1.21 2002/09/23 21:07:49 aa Exp $
 
 =head1 METHODS
 
@@ -123,6 +124,7 @@ sub new {
                       BUFFER    => undef }, $class;
 
   # Configure the object
+  # does nothing if no arguments supplied
   $block->configure( @_ );
 
   return $block;
@@ -152,7 +154,7 @@ sub querydb {
   $self->_make_query();
 
   # check for failed connect
-  return undef unless defined $self->{BUFFER};
+  return unless defined $self->{BUFFER};
 
   # return an Astro::ADS::Result object
   return $self->_parse_query();
@@ -176,7 +178,7 @@ sub followup {
   my $self = shift;
 
   # return unless we have arguments
-  return undef unless @_;
+  return unless @_;
 
   my $bibcode = shift;
   my $link_type = shift;
@@ -185,7 +187,7 @@ sub followup {
   $self->_make_followup( $bibcode, $link_type );
 
   # check for failed connect
-  return undef unless defined $self->{BUFFER};
+  return unless defined $self->{BUFFER};
 
   # return an Astro::ADS::Result object
   return $self->_parse_query();
@@ -287,7 +289,15 @@ Returns the user agent tag sent by the module to the ADS server.
 
 sub agent {
   my $self = shift;
-  return $self->{USERAGENT}->agent();
+  my $string = shift;
+  if (defined $string) {
+	my $agent = $self->{USERAGENT}->agent();
+	$agent =~ s/(\d+)\s(\[.*\]\s*)?\(/$1 [$string] (/;
+	return $self->{USERAGENT}->agent($agent);
+  }
+  else {
+    return $self->{USERAGENT}->agent();
+  }
 }
 
 # O T H E R   M E T H O D S ------------------------------------------------
@@ -698,7 +708,7 @@ sub configure {
   # -------------------------
 
   # return unless we have arguments
-  return undef unless @_;
+  return unless @_;
 
   # grab the argument list
   my %args = @_;
@@ -886,9 +896,9 @@ sub _parse_query {
   my $paper;
 
   # loop round the returned buffer and stuff the contents into Paper objects
-  my ( $line, $next, $counter );
+  my ( $next, $counter );
   $next = $counter = 0;
-  foreach $line ( 0 ... $#buffer ) {
+  foreach my $line ( 0 ... $#buffer ) {
 
      #     R     Bibcode
      #     T     Title
@@ -1165,10 +1175,10 @@ sub _parse_query {
            }
 
 
+           # set the next paper increment
+           $next = $counter;
            # increment the line counter
            $counter++;
-           # set the next paper increment
-           $next = $counter - 1;
 
         }
 

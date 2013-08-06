@@ -66,7 +66,8 @@ $links[5] = "CITATIONS";
 $links[6] = "SIMBAD";
 
 $URL =
- "http://cdsads.u-strasbg.fr/cgi-bin/nph-bib_query?bibcode=1998MNRAS.295..167A";
+ "http://ukads.nottingham.ac.uk/cgi-bin/nph-bib_query?bibcode=1998MNRAS.295..167A";
+ #"http://cdsads.u-strasbg.fr/cgi-bin/nph-bib_query?bibcode=1998MNRAS.295..167A";
 
 $object = "EX Hya";
 
@@ -114,7 +115,8 @@ $origin = "AUTHOR";
 $links[0] = "ABSTRACT";
 
 $URL =
- "http://cdsads.u-strasbg.fr/cgi-bin/nph-bib_query?bibcode=2001adass..10..459A";
+ "http://ukads.nottingham.ac.uk/cgi-bin/nph-bib_query?bibcode=2001adass..10..459A";
+ #"http://cdsads.u-strasbg.fr/cgi-bin/nph-bib_query?bibcode=2001adass..10..459A";
 
 # create another Astro::ADS::Result::Paper object from the meta-data
 my $other = new Astro::ADS::Result::Paper( Bibcode   => $bibcode,

@@ -1,3 +1,26 @@
+2013-08-06  Boyd Duffee <b dot duffee at keele dot ac dot uk>
+
+	* re-vamped the Test Suite
+		- changed all tests to use Test::More
+		- uses is_deeply() to test array values 
+		- added 00-load.t and moved the load module tests
+		- added 01-lwp.t for the User Agent specific code
+		- tests add [Test Suite hh:mm:ss] to their UserAgent strings
+		- added sleep before subsequent calls to ADS to ease burden on remote server
+		- general de-cluttering, moving print statements to diag()
+
+	* Query.pm
+		- removed explicit return undef statements for failure, as per
+			Perl Best Practices, p199
+		- agent() can now add information to the UserAgent string
+
+	* Paper.pm
+		- removed explicit return undef statements for failure, as per
+			Perl Best Practices, p199
+
+	* Updated all modules to version 1.25, just for consistancy
+		(except where it isn't)
+
 2011-07-11  Boyd Duffee <b dot duffee at isc dot keele dot ac dot uk>
 
 	* Query.pm

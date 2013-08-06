@@ -12,6 +12,7 @@ the L<Astro::ADS::Query> module.
 
 =head1 REVISION
 
+$Id: ADS.pm,v 1.25 2013/08/06 bjd Exp $
 $Id: ADS.pm,v 1.3 2004/01/28 09:04:42 aa Exp $
 
 =head1 METHODS
@@ -52,6 +53,6 @@ above which turns the URL from an object variable to a class variable.
 
 use strict;
 use vars qw/ $VERSION /;
-$VERSION = '1.21.0';
+$VERSION = '1.25';
 
 1;                                                                  

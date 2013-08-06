@@ -1,213 +1,165 @@
 # Astro::ADS::Query test harness
 
-# strict
 use strict;
-
-#load test
-use Test;
-BEGIN { plan tests => 26 };
-
-# load modules
+use Test::More tests => 22;
 use Astro::ADS::Query;
 use Astro::ADS::Result;
 
-# debugging
-# use Data::Dumper;
-
 # T E S T   H A R N E S S --------------------------------------------------
-
-# test the test system
-ok(1);
+my $timestamp = join ':', (localtime)[2,1,0];
+my $wait = 5;	# seconds to wait before subsequent calls to ADS
 
 # list of authors
-my ( @authors, @new_authors );
-$authors[0] = "Allan, Alasdair";
-$authors[1] = "Naylor, Tim";
-$authors[2] = "Harries, T.J.";
-$authors[3] = "Bate, M.";
+my @authors = ( "Allan, Alasdair", "Naylor, Tim", "Harries, T.J.", "Bate, M.");
 
 # Check the configuration of the Query object
 my $query = new Astro::ADS::Query( Authors => \@authors );
+$query->agent("Test Suite $timestamp");
+
+# Proxy
+my $proxy = $query->proxy();
+if ($proxy ) {
+	diag("You are using $proxy as a web proxy");
+}
+else {
+	diag("No web proxy in use");
+}
+is( $query->proxy(undef), undef, 'Unset proxy');
+
 
 # AUTHORS
-# -------
-
-# check its got all the authors
 my @ret_authors = $query->authors();
-for my $i (0 .. $#authors) {
-   ok( $ret_authors[$i], $authors[$i] );
-}
-
-# check scalar context
+is_deeply(\@ret_authors, \@authors, "check its got all the authors");
 my $first_author = $query->authors();
-ok( $first_author, $authors[0] );
+is( $first_author, $authors[0], "scalar call to authors returns the first author" );
 
 # delete two authors and check again
-$new_authors[0] = $authors[0];
-$new_authors[1] = $authors[1];
+my @new_authors = @authors[0,1];
 my @next_authors = $query->authors(\@new_authors);
-
-# check its got all the authors
-for my $i (0 .. $#new_authors) {
-   ok( $next_authors[$i], $new_authors[$i] );
-}
-
-# check scalar context
+is_deeply( \@next_authors, \@new_authors, "delete two authors and check again that it got all its authors");
 my $new_first_author = $query->authors();
-ok( $new_first_author, $new_authors[0] );
+is( $new_first_author, $new_authors[0], "check authors in scalar context" );
 
 # change author logic
 my $author_logic = $query->authorlogic("AND");
+is( $author_logic, "AND", "Check author logic" );
 
-# check logic okay
-ok( $author_logic, "AND" );
-
-# for verbose=1
-print "# Connecting to ADS\n";
 
 # query ADS
+diag("First query to ADS (authors)");
 my $result = $query->querydb();
-# print Dumper($result);
-print "# Continuing Tests\n";
 
-# grab the comparison from the DATA block
+# grab the comparison from the DATA block  - NEVER USED, WHY?!?
 my @data = <DATA>;
 chomp @data;
 
 # change author logic
 $author_logic = $query->authorlogic("OR");
-
-# check logic okay
-ok( $author_logic, "OR" );
+is( $author_logic, "OR", "check author login" );
 
 # list of objects
-my ( @objects );
-$objects[0] = "U Gem";
-$objects[1] = "SS Cyg";
+my @objects = ( "U Gem", "SS Cyg");
 
 # Check the configuration of the Query object
-my $query2 = new Astro::ADS::Query( Objects => \@objects );
+my $query2 = new Astro::ADS::Query( Objects => \@objects, proxy => $query->proxy() );
+$query2->agent("Test Suite $timestamp");
 
 my @ret_obj = $query2->objects();
-for my $i (0 .. $#objects) {
-   ok( $ret_obj[$i], $objects[$i] );
-}
+is_deeply(\@ret_obj, \@objects, "Check the configuration of the Query object");
 
 # change author logic
 my $obj_logic = $query2->objectlogic("AND");
+is( $obj_logic, "AND", "check the author logic" );
 
-# check logic okay
-ok( $obj_logic, "AND" );
 
-# for verbose=1
-print "# Connecting to ADS\n";
-
-# query ADS
+# query ADS (2)
+diag("Second query to ADS - searching on ", join " and ", @objects);
+sleep $wait;
 my $other_result = $query2->querydb();
-# print Dumper($other_result);
 
-print "# Continuing Tests\n";
-
-# check the number of papers returned, right now(!) it should be 304,
-# but by default we should get the first 100 abstracts only...
-############# for some reason it now returns 99 #####################
-# ok( 100,  $other_result->sizeof());
-ok( 99,  $other_result->sizeof());
+is( $other_result->sizeof(), 100, 'Should get 100 abstracts per page (this paper returns 304 results)');
 
 # add some more objects
 $objects[2] = "M31";
 $objects[3] = "M32";
 
-my $query3 = new Astro::ADS::Query( Objects => \@objects );
+diag("Third query with additional objects ($objects[2] and $objects[3])");
+my $query3 = new Astro::ADS::Query( Objects => \@objects, proxy => $query->proxy() );
+$query3->agent("Test Suite $timestamp");
 $query3->objectlogic("AND");
 
 # Set the object query
 $query3->objects( \@objects );
 
-# for verbose=1
-print "# Connecting to ADS\n";
 
-# query ADS
+# query ADS (3)
+sleep $wait;
 my $next_result = $query3->querydb();
 
-print "# Continuing Tests\n";
-
-#my %hash = $query2->_dump_options();
-#for my $key ( keys %hash ) {
-#   print "$key\t\t\t= $hash{$key}\n";
-#} 
-
-# should (hopefully) be 0
-ok( $next_result->sizeof(), 0);
+is( $next_result->sizeof(), 0, 'Should have no results with those 4 objects' . join ", ", @objects);
 
 # set and check the proxy
 $query2->proxy('http://wwwcache.ex.ac.uk:8080/');
-my $proxy_url = $query2->proxy();
+is( $query2->proxy(), 'http://wwwcache.ex.ac.uk:8080/', 'Should return the proxy just set');
 
-ok( $proxy_url , 'http://wwwcache.ex.ac.uk:8080/');
-
-# set and check the proxy
+# set and check the timeout
 $query2->timeout(60);
-my $time = $query2->timeout();
-
-ok( $time , 60 );
+is( $query2->timeout(), 60, 'checking timeout on the user agent' );
 
 # test bibcode query for Tim Jenness
-my $query4 = new Astro::ADS::Query( Bibcode => "1996PhDT........42J" );
+diag("Fourth query for Tim Jenness' paper 1996PhDT........42J");
+my $query4 = new Astro::ADS::Query( Bibcode => "1996PhDT........42J", proxy => $query->proxy() );
+$query4->agent("Test Suite $timestamp");
 
 # query ADS
-print "# Connecting to ADS\n";
+sleep $wait;
 my $bibcode_result = $query4->querydb();
-#print Dumper($bibcode_result);
-print "# Continuing Tests\n";
 
 # check we have the right object
 my $timj_thesis = $bibcode_result->paperbyindex( 0 );
 my @timj_abstract = $timj_thesis->abstract();
-
-# Old test should have 32 lines of text!
-# New result returns 33 lines of text!  Possible reformating by ADS?
-ok( @timj_abstract, 33 );
+is( @timj_abstract, 33, "number of lines of text for Tim Jenness' abstract" );
 
 # test the user agent tag
-print "# User Agent: " . $query4->agent() . "\n";
+diag("User Agent: ", $query4->agent() );
 
 # Test the start/end year and month options
 $query4->startmonth( "01" );
-ok( $query4->startmonth(), "01" );
+is( $query4->startmonth(), "01", 'Start month option' );
 
 $query4->endmonth( "12" );
-ok( $query4->endmonth(), "12" );
+is( $query4->endmonth(), "12", 'End month option' );
 
 $query4->startyear( "2001" );
-ok( $query4->startyear(), "2001" );
+is( $query4->startyear(), "2001", 'Start year option' );
 
 $query4->endyear( "2002" );
-ok( $query4->endyear(), "2002" );
+is( $query4->endyear(), "2002", 'End year option' );
 
-# test the ampersand bibcode bug ( affects Astronomy & Astrophysics )
+# test the ampersand bibcode bug rt #35645( affects Astronomy & Astrophysics )
 my $bibcode5 = '1977A&A....60...43D';
-my $query5 = new Astro::ADS::Query( Bibcode => '1977A&A....60...43D' );
+diag("Fifth query for $bibcode5");
+my $query5 = new Astro::ADS::Query( Bibcode => $bibcode5, proxy => $query->proxy() );
+$query5->agent("Test Suite $timestamp");
 
-# query ADS
-print "# Connecting to ADS\n";
-my $aNa_bibcode_result = $query5->querydb();
-#print Dumper($aNa_bibcode_result);
-print "# Continuing Tests\n";
+sleep $wait;
+my $AnA_bibcode_result = $query5->querydb();
 
 # check we have the right object
-my $aNa_paper = $aNa_bibcode_result->paperbyindex( 0 );
-my $aNa_title = $aNa_paper->title();
-my $aNa_bibcode = $aNa_paper->bibcode();
+my $AnA_paper = $AnA_bibcode_result->paperbyindex( 0 );
+my $AnA_title = $AnA_paper->title();
+my $AnA_bibcode = $AnA_paper->bibcode();
 
 # title from Web search
-ok( $aNa_title, 'NGC 1510 - A young elliptical galaxy' );
-ok( $aNa_bibcode, $bibcode5 );
+is( $AnA_title, 'NGC 1510 - A young elliptical galaxy', 'Title from Web search' );
+is( $AnA_bibcode, $bibcode5, "bibcodes should match $bibcode5" );
 
-# check the references with ampersand in bibcode
-my $aNa_references = $aNa_paper->references();
-ok( $aNa_references->sizeof(), 39 );
+diag("Call reference method on $AnA_bibcode");
+my $AnA_references = $AnA_paper->references();
+is( $AnA_references->sizeof(), 39, 'check the references with ampersand in bibcode' );
+is( $AnA_references->paperbyindex(2)->bibcode(), '1973A&A....29...43B', 'Third reference should be the 1973 Astronomy & Astrophysics paper');
 
+done_testing;
 exit;
 
 # D A T A   B L O C K  ----------------------------------------------------
