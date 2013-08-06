@@ -11,6 +11,8 @@ Result/Result.pm
 Result/Makefile.PL
 Result/Paper/Paper.pm
 Result/Paper/Makefile.PL
+t/00-load.t
+t/01-lwp.t
 t/query.t
 t/result.t
 t/paper.t
