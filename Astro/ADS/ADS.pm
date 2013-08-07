@@ -74,6 +74,8 @@ This is a "good" idea, but fiddly to implement.  Prompt the user for one of the
 ADS mirrors during the installation and write it into Astro::ADS::Query to save
 setting it at the beginning of each script
 
+=back
+
 =cut
 
 use strict;
