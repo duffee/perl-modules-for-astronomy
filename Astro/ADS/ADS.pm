@@ -79,7 +79,8 @@ setting it at the beginning of each script
 =cut
 
 use strict;
+use warnings;
 use vars qw/ $VERSION /;
-$VERSION = '1.25.1';
+$VERSION = '1.25_2';
 
 1;                                                                  

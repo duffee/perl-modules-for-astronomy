@@ -46,6 +46,7 @@ Astro::ADS::Result::Paper objects.
 # L O A D   M O D U L E S --------------------------------------------------
 
 use strict;
+use warnings;
 use vars qw/ $VERSION /;
 
 # Overloading
@@ -53,7 +54,7 @@ use overload '""' => "stringify";
 
 use Astro::ADS::Result::Paper;
 
-'$Revision: 1.14 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
+'$Revision: 1.25_2 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
 
 # C O N S T R U C T O R ----------------------------------------------------
 

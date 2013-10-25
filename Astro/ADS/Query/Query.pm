@@ -59,6 +59,7 @@ details.
 # L O A D   M O D U L E S --------------------------------------------------
 
 use strict;
+use warnings;
 use vars qw/ $VERSION /;
 
 use LWP::UserAgent;
@@ -67,7 +68,7 @@ use Astro::ADS::Result::Paper;
 use Net::Domain qw(hostname hostdomain);
 use Carp;
 
-'$Revision: 1.25 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
+'$Revision: 1.25_2 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
 
 # C L A S S   A T T R I B U T E S ------------------------------------------
 {

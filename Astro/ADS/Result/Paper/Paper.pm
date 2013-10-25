@@ -64,12 +64,13 @@ returned by an Astro::ADS::Query object.
 # L O A D   M O D U L E S --------------------------------------------------
 
 use strict;
+use warnings;
 use vars qw/ $VERSION /;
 
 # Overloading
 use overload '""' => "stringify";
 
-'$Revision: 1.25 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
+'$Revision: 1.25_2 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
 
 # C O N S T R U C T O R ----------------------------------------------------
 
