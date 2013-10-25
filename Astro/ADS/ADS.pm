@@ -57,7 +57,7 @@ above which turns the URL from an object variable to a class variable.
 Explain the preference to set the class variable using the ads_mirror() method
 in Astro::ADS::Query at the top of the script so that followup queries go to
 the expected place.
-
+*NB*
 Also note that the proxy() method is only affects one query object and 
 the user agent looks at the environment variables HTTP_PROXY and NO_PROXY to
 the exclusion of almost all else.  Once again, set $ENV{HTTP_PROXY} at the
