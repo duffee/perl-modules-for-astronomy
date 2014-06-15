@@ -5,4 +5,5 @@ Makefile
 META.yml
 *.yml
 *.json
+*.old
 adsquery

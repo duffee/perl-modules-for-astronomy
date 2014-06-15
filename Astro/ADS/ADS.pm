@@ -12,6 +12,12 @@ the L<Astro::ADS::Query> module.
 
 =head1 REVISION
 
+B<NOTE:> The API for the ADS is changing and the current interface will disappear.
+This will be the final revision of this version of Astro::ADS.  The new API
+(described at L<https://github.com/adsabs/adsabs-dev-api> ) will be implemented
+as version 2.0 sometime in 2015.
+
+$Id: ADS.pm,v 1.26 2014/06/15 bjd Exp $
 $Id: ADS.pm,v 1.25 2013/08/06 bjd Exp $
 $Id: ADS.pm,v 1.3 2004/01/28 09:04:42 aa Exp $
 
@@ -74,6 +80,10 @@ This is a "good" idea, but fiddly to implement.  Prompt the user for one of the
 ADS mirrors during the installation and write it into Astro::ADS::Query to save
 setting it at the beginning of each script
 
+=item Error 500: handle network failures gracefully.  
+
+Return undef instead of die()ing.
+
 =back
 
 =cut
@@ -81,6 +91,6 @@ setting it at the beginning of each script
 use strict;
 use warnings;
 use vars qw/ $VERSION /;
-$VERSION = '1.25_2';
+$VERSION = '1.26';
 
 1;                                                                  

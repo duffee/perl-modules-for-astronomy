@@ -54,7 +54,7 @@ use overload '""' => "stringify";
 
 use Astro::ADS::Result::Paper;
 
-'$Revision: 1.25_2 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
+'$Revision: 1.26 $ ' =~ /.*:\s(.*)\s\$/ && ($VERSION = $1);
 
 # C O N S T R U C T O R ----------------------------------------------------
 
