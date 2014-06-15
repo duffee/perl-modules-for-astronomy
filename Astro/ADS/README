@@ -20,6 +20,9 @@ shortly. I'm currently following the "relase early, release often" strategy.
 
 Comments and patches are always welcome.
 
+NOTE: The ADS api is changing.  See https://github.com/adsabs/adsabs-dev-api
+for details.
+
 Why do it?
 ----------
 
